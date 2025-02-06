@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tupad 2 LMI Converter</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+</head>
+<style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    input, button { margin: 10px; padding: 10px; }
+    table { margin: 20px auto; border-collapse: collapse; width: 50%; }
+    th, td { border: 1px solid black; padding: 10px; text-align: left; }
+</style>
+<body>
+    <!-- <img style="position: absolute; z-index: -99; margin: 10em 15em 0 0;" src="cher.gif" alt="img"> -->
+<div class="container">
+    <div class="row">
+        <div class="col-12 mx-5">
+            <h1 class="mt-2 mb-4">Welcome TUPADERS</h1>
+            <p><strong>Documentation on how to use:</strong> </p>
+            
+        </div>
+        <div>
+            <h2 class="text-primary">Full Name Splitter</h2>
+    <textarea id="fullNames" placeholder="Enter full names, one per line" rows="5" cols="40"></textarea>
+    <button onclick="splitNames()">Split</button>
+    
+    <h3>Result:</h3>
+    <table hidden>
+        <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                
+            </tr>
+        </thead>
+        <tbody id="nameTableBody"></tbody>
+    </table>
+
+    <h3>Separated Columns:</h3>
+    <label>Last Names</label>
+    <textarea id="firstNamesOutput" rows="5" readonly></textarea>
+    <label>First Names</label>
+    <textarea id="middleNamesOutput" rows="5" readonly></textarea>
+    <label>Middle Names</label>
+    <textarea id="lastNamesOutput" rows="5" readonly></textarea>
+
+    <div style="text-align: left; margin-top: 1em;">
+    <h3 class="text-success">Convert Date Format:</h3>
+    <textarea id="dateInput" placeholder="Enter date in format: 2/17/2003" rows="5"></textarea>
+    <button onclick="convertDate()">Convert</button>
+    <h3>Converted Date:</h3>
+    <textarea id="dateOutput" rows="5" readonly></textarea>
+    </div>
+
+    <div style="margin-top: -20em;">
+    <h3 class="text-warning">Convert Purok Format:</h3>
+    <textarea id="purokInput" placeholder="Enter location like PUROK 2 or NA" rows="5"></textarea>
+    <button onclick="convertPurok()">Convert</button>
+    <h3>Converted Purok:</h3>
+    <textarea id="purokOutput" rows="5" readonly></textarea>
+</div>
+    
+                <div style="text-align: right; margin-top: -20em; ">
+                <h3 class="text-danger" style="padding: 0;">Convert Age Format:</h3>
+    <textarea id="ageInput" placeholder="Enter age in format: 21y 11mos" rows="5"></textarea>
+    <button onclick="convertAge()">Convert</button>
+    <h3>Converted Age:</h3>
+    <textarea id="ageOutput" rows="5" readonly></textarea>
+            </div>
+    <script>
+        function splitNames() {
+            let fullNames = document.getElementById("fullNames").value.trim().split("\n");
+            let tableBody = document.getElementById("nameTableBody");
+            let firstNamesOutput = document.getElementById("firstNamesOutput");
+            let middleNamesOutput = document.getElementById("middleNamesOutput");
+            let lastNamesOutput = document.getElementById("lastNamesOutput");
+            
+            tableBody.innerHTML = "";
+            let firstNames = [];
+            let middleNames = [];
+            let lastNames = [];
+            
+            fullNames.forEach(fullName => {
+                fullName = fullName.replace(/,/g, ""); 
+                let nameParts = fullName.trim().split(" ");
+                let firstName = nameParts[0] || "";
+                let middleName = nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "";
+                let lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+                
+                firstNames.push(firstName);
+                middleNames.push(middleName);
+                lastNames.push(lastName);
+                
+                let row = `<tr>
+                    <td class="copyable">${firstName}</td>
+                    <td>${middleName}</td>
+                    <td>${lastName}</td>
+                </tr>`;
+                
+                tableBody.innerHTML += row;
+            });
+            
+            firstNamesOutput.value = firstNames.join("\n");
+            middleNamesOutput.value = middleNames.join("\n");
+            lastNamesOutput.value = lastNames.join("\n");
+        }
+
+        function convertAge() {
+            let ageInput = document.getElementById("ageInput").value.trim().split("\n");
+            let ageOutput = document.getElementById("ageOutput");
+            let convertedAges = ageInput.map(age => age.replace(/(\d+)y.*$/, "$1"));
+            ageOutput.value = convertedAges.join("\n");
+        }
+
+        function convertDate() {
+            let dateInput = document.getElementById("dateInput").value.trim().split("\n");
+            let dateOutput = document.getElementById("dateOutput");
+            let convertedDates = dateInput.map(date => {
+                let parts = date.split("/");
+                if (parts.length === 3) {
+                    let month = parts[0].padStart(2, '0');
+                    let day = parts[1].padStart(2, '0');
+                    let year = parts[2];
+                    return `${month}-${day}-${year}`;
+                }
+                return date;
+            });
+            dateOutput.value = convertedDates.join("\n");
+        }
+        function convertPurok() {
+            let purokInput = document.getElementById("purokInput").value.trim().split("\n");
+            let purokOutput = document.getElementById("purokOutput");
+            let convertedPurok = purokInput.map(purok => purok.toUpperCase() === "NA" ? "N/A" : purok.replace(/PUROK (\d+)/i, "P-$1"));
+            purokOutput.value = convertedPurok.join("\n");
+        }
+    </script>
+
+</body>
+</html>
