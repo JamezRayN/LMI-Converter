@@ -73,6 +73,15 @@
     <h3>Converted Age:</h3>
     <textarea id="ageOutput" rows="5" readonly></textarea>
             </div>
+
+            <h3>Combine Address:</h3>
+    <textarea id="streetInput" placeholder="Enter Streets (one per line)" rows="5" cols="30"></textarea>
+    <textarea id="barangayInput" placeholder="Enter Barangays (one per line)" rows="5" cols="30"></textarea>
+    <textarea id="municipalInput" placeholder="Enter Municipalities (one per line)" rows="5" cols="30"></textarea>
+    <button onclick="combineAddresses()">Combine</button>
+    <h3>Formatted Addresses:</h3>
+    <textarea id="addressOutput" rows="5" cols="50" readonly></textarea>
+            
     <script>
         function splitNames() {
             let fullNames = document.getElementById("fullNames").value.trim().split("\n");
@@ -138,6 +147,25 @@
             let purokOutput = document.getElementById("purokOutput");
             let convertedPurok = purokInput.map(purok => purok.toUpperCase() === "NA" ? "N/A" : purok.replace(/PUROK (\d+)/i, "P-$1"));
             purokOutput.value = convertedPurok.join("\n");
+        }
+
+         function combineAddresses() {
+            let streets = document.getElementById("streetInput").value.trim().split('\n');
+            let barangays = document.getElementById("barangayInput").value.trim().split('\n');
+            let municipals = document.getElementById("municipalInput").value.trim().split('\n');
+            
+            let combinedAddresses = [];
+            for (let i = 0; i < Math.max(streets.length, barangays.length, municipals.length); i++) {
+                let street = streets[i] ? capitalizeFirstLetter(streets[i].trim()) : "";
+                let barangay = barangays[i] ? capitalizeFirstLetter(barangays[i].trim()) : "";
+                let municipal = municipals[i] ? capitalizeFirstLetter(municipals[i].trim()) : "";
+                combinedAddresses.push(`${street} ${barangay} ${municipal}`.replace(/\s+/g, ' ').trim());
+            }
+            document.getElementById("addressOutput").value = combinedAddresses.join('\n');
+        }
+        
+        function capitalizeFirstLetter(str) {
+            return str.toLowerCase().replace(/(^|\s)\S/g, char => char.toUpperCase());
         }
     </script>
 
